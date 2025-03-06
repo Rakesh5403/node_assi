@@ -1,12 +1,19 @@
 const Joi = require('joi');
 
-const validateData = (schema, data) => {
-  const { error } = schema.validate(data);
-  if (error) {
-    const errorMessages = error.details.map((detail) => detail.message);
-    return { isValid: false, errors: errorMessages };
-  }
-  return { isValid: true };
+const validateData = (schema) => {
+  return (req, res, next) => {
+    const { error } = schema.validate(req.body);
+    if (error) {
+      const errorMessages = error.details.map((detail) => detail.message);
+      return res.status(400).json({ isValid: false, errors: errorMessages });
+    }
+    next();
+  };
 };
 
 module.exports = { validateData };
+
+
+
+
+

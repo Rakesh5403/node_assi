@@ -2,13 +2,15 @@
 
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env; 
+const { errorMessages } = require('../constants/messages');
+
 
 
 const authenticateToken = (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');  
   
   if (!token) {
-    return res.status(401).json({ message: 'Access denied. No token provided.' });
+    return res.status(401).json({ message: errorMessages.NO_TOKEN });
   }
 
   try {
@@ -17,7 +19,7 @@ const authenticateToken = (req, res, next) => {
     req.user = { userId: decoded.userId, username: decoded.username }; 
     next();  
   } catch (err) {
-    res.status(401).json({ message: 'Invalid or expired token.' });
+    res.status(401).json({ message: errorMessages.INVALID_TOKEN });
   }
 };
 

@@ -18,7 +18,9 @@ module.exports = {
       USER_REGISTRATION_FAILED: 'User registration is failed.',
       INVALID_CREDENTIALS : 'The user credentials were incorrect.',
       USER_RETRIEVAL_FAILED : 'Failed to retrive user.',
-      USER_UPDATE_FAILED : 'Failed to update user.'
+      USER_UPDATE_FAILED : 'Failed to update user.',
+      NO_TOKEN:'Access denied. No token provided.',
+      INVALID_TOKEN:'Invalid or expired token.'
     },
     statusCode:{
       OK: 200,
