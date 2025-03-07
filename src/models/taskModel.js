@@ -114,7 +114,7 @@ const deleteTask = async (id) => {
   }
 };
 
-const patchTask = async (taskId, { title, description, status, due_date }) => {
+const perticularUpdateTask = async (taskId, { title, description, status, due_date }) => {
   try {
     const result = await new Promise((resolve, reject) => {
       const updateFields = [];
@@ -162,4 +162,4 @@ const patchTask = async (taskId, { title, description, status, due_date }) => {
   }
 };
 
-module.exports = { createTask, getAllTasks, getTaskById, updateTask, deleteTask, patchTask };
+module.exports = { createTask, getAllTasks, getTaskById, updateTask, deleteTask, perticularUpdateTask };

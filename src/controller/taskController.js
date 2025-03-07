@@ -84,12 +84,12 @@ const deleteTask = async (req, res) => {
   }
 };
 
-const patchTask = async (req, res) => {
+const perticularUpdateTask = async (req, res) => {
   try {
     const { taskId } = req.params;
     const { title, description, status, due_date } = req.body;
 
-    const result = await taskModel.patchTask(taskId, { title, description, status, due_date });
+    const result = await taskModel.perticularUpdateTask(taskId, { title, description, status, due_date });
 
     res.status(statusCode.OK).json({ message: successMessages.TASK_UPDATED });
   } catch (err) {
@@ -98,4 +98,4 @@ const patchTask = async (req, res) => {
   }
 };
 
-module.exports = { createTask, getAllTasks, getTaskById, updateTask, deleteTask, patchTask };
+module.exports = { createTask, getAllTasks, getTaskById, updateTask, deleteTask, perticularUpdateTask };

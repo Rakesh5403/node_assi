@@ -2,17 +2,10 @@ const userModel = require('../models/userModel');
 const { errorMessages, successMessages, statusCode } = require('../constants/messages');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-// const { validateData } = require('../utils/validationUtil');
-// const { userValidation } = require('../middlewares/validationMiddleware');
 
 
 const registerUser = async (req, res) => {
-  //  const { isValid, errors } = validateData(userValidation, req.body);
-  
-  //   if (!isValid) {
-      
-  //     return res.status(400).json({ message: 'validate failed', errors });
-  //   }
+
   try {
     const { username, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);  

@@ -2,10 +2,12 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controller/userController');
+const { validateData } = require('../utils/validationUtil');
+const { userValidation, userLoginValidation, userUpdateValidation } = require('../middlewares/validationMiddleware.js');
 
 
-router.post('/register', userController.registerUser);  
-router.post('/login',userController. loginUser);
-router.put('/updateUserDetails',userController.updateUserDetails);
+router.post('/register',validateData(userValidation), userController.registerUser);  
+router.post('/login',validateData(userLoginValidation), userController. loginUser);
+router.put('/updateUserDetails',validateData(userUpdateValidation), userController.updateUserDetails);
 module.exports = router;
 
