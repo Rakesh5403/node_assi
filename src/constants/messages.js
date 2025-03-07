@@ -20,7 +20,8 @@ module.exports = {
       USER_RETRIEVAL_FAILED : 'Failed to retrive user.',
       USER_UPDATE_FAILED : 'Failed to update user.',
       NO_TOKEN:'Access denied. No token provided.',
-      INVALID_TOKEN:'Invalid or expired token.'
+      INVALID_TOKEN:'Invalid or expired token.',
+      FORBIDDEN: 'You do not have permission to access this resource.'
     },
     statusCode:{
       OK: 200,
