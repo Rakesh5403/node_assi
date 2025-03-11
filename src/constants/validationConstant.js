@@ -8,7 +8,7 @@ const taskValidation = Joi.object({
 });
 
 const taskStatusValidation = Joi.object({
-  title: Joi.string().min(3).max(255).required(),
+  title: Joi.string().min(3).max(255).optional(),
   description: Joi.string().optional(),
   status: Joi.string().valid('complete', 'incomplete').required(),
   due_date: Joi.date().optional(),

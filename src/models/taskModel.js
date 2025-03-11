@@ -83,7 +83,7 @@ const updateTask = async (taskId, { title, description, status, due_date }) => {
           if (err) {
             reject(err);
           } else if (results.affectedRows === 0) {
-            reject('Task not found');
+            reject(err);
           } else {
             resolve(results);
           }
@@ -96,7 +96,7 @@ const updateTask = async (taskId, { title, description, status, due_date }) => {
   }
 };
 
-const deleteTask = async (id) => {
+const softDeleteTask = async (id) => {
   try {
     const result = await new Promise((resolve, reject) => {
       pool.query('DELETE FROM tasklist WHERE id = ?', [id], (err, results) => {
@@ -114,7 +114,8 @@ const deleteTask = async (id) => {
   }
 };
 
-const perticularUpdateTask = async (taskId, { title, description, status, due_date }) => {
+
+const titleStatusUpdateTask = async (taskId, { title, description, status, due_date }) => {
   try {
     const result = await new Promise((resolve, reject) => {
       const updateFields = [];
@@ -149,7 +150,7 @@ const perticularUpdateTask = async (taskId, { title, description, status, due_da
         if (err) {
           reject(err);
         } else if (results.affectedRows === 0) {
-          reject('Task not found');
+          reject(err);
         } else {
           resolve(results);
         }
@@ -162,4 +163,4 @@ const perticularUpdateTask = async (taskId, { title, description, status, due_da
   }
 };
 
-module.exports = { createTask, getAllTasks, getTaskById, updateTask, deleteTask, perticularUpdateTask };
+module.exports = { createTask, getAllTasks, getTaskById, updateTask, titleStatusUpdateTask, softDeleteTask };

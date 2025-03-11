@@ -27,7 +27,7 @@ const getUserByEmail = async (email) => {
         if (err) {
           reject(err);
         } else if (results.length === 0) {
-          reject('USER_NOT_FOUND');
+          reject(err);
         } else {
           resolve(results[0]);
         }
@@ -48,7 +48,7 @@ const getUserById = async (userId) => {
         if (err) {
           reject(err);
         } else if (results.length === 0) {
-          reject('USER_NOT_FOUND');
+          reject(err);
         } else {
           resolve(results[0]);
         }
@@ -80,14 +80,14 @@ const updateUserDetails = async ({ userId, username, email, passwordHash }) => {
         if (err) {
           reject(err);
         } else if (results.affectedRows === 0) {
-          reject('USER_NOT_FOUND');
+          reject(err);
         } else {
           resolve();
         }
       });
     });
 
-    return { message: 'User details updated successfully' };
+    return  result;
   } catch (error) {
     throw error;
   }

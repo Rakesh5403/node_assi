@@ -5,7 +5,8 @@ module.exports = {
       TASK_DELETED: 'Task deleted successfully',
       TASK_RETRIEVED: 'Task retrieved successfully',
       TASKS_RETRIEVED: 'Tasks retrieved successfully',
-      USER_LOGGED_IN : 'User login successfully.'
+      USER_LOGGED_IN : 'User login successfully.',
+      TASK_SOFT_DELETED : 'Task soft deleted successfully.'
     },
     errorMessages: {
       TASK_CREATION_FAILED: 'Failed to create task.',
@@ -21,22 +22,27 @@ module.exports = {
       USER_UPDATE_FAILED : 'Failed to update user.',
       NO_TOKEN:'Access denied. No token provided.',
       INVALID_TOKEN:'Invalid or expired token.',
-      FORBIDDEN: 'You do not have permission to access this resource.'
+      FORBIDDEN: 'You do not have permission to access this resource.',
+      TASK_SOFT_DELETE_FAILED: 'There was an error while attempting to soft delete the task'
     },
-    statusCode:{
+   
+    successFullCode : {
       OK: 200,
       CREATED: 201,
+    },
+
+    clientErrorCode : {
       BAD_REQUEST: 400,
       UNAUTHORIZED: 401,
       FORBIDDEN: 403,
       NOT_FOUND: 404,
+    },
+
+    serverErrorCode : {
       INTERNAL_SERVER_ERROR: 500,
       NOT_IMPLEMENTED: 501,
       BAD_GATEWAY: 502,
-      SERVICE_UNAVAILABLE: 503,
-      GATEWAY_TIMEOUT: 504,
     }
-
 
   };
   
