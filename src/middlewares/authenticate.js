@@ -8,6 +8,10 @@ const { errorMessages, clientErrorCode } = require('../constants/messages');
 
 const authenticateToken = (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');  
+  
+  if (!token) {
+    return res.status(clientErrorCode.UNAUTHORIZED).json({statusCode:clientErrorCode.UNAUTHORIZED, message: errorMessages.NO_TOKEN });
+  }
 
   try {
     
@@ -15,7 +19,7 @@ const authenticateToken = (req, res, next) => {
     req.user = { userId: decoded.userId, username: decoded.username, email: decoded.email }; 
 
     if (req.user.userId == 'userId') {
-      return res.status(clientErrorCode.FORBIDDEN).json({ message: errorMessages.FORBIDDEN });
+      return res.status(clientErrorCode.FORBIDDEN).json({statusCode:clientErrorCode.FORBIDDEN, message: errorMessages.FORBIDDEN });
     }
 
     next();  

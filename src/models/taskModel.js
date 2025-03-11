@@ -55,6 +55,32 @@ const getAllTasks = async ({ user_id, status, search, sortField = 'due_date', so
   }
 };
 
+const filterTasksByStatus = async ({ user_id, status }) => {
+  try {
+    let query = 'SELECT * FROM tasklist WHERE user_id = ?';
+    const params = [user_id];
+
+    if (status) {
+      query += ' AND status = ?';
+      params.push(status);
+    }
+
+    const result = await new Promise((resolve, reject) => {
+      pool.query(query, params, (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
+    });
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getTaskById = async (taskId) => {
   try {
     const result = await new Promise((resolve, reject) => {
@@ -163,4 +189,4 @@ const titleStatusUpdateTask = async (taskId, { title, description, status, due_d
   }
 };
 
-module.exports = { createTask, getAllTasks, getTaskById, updateTask, titleStatusUpdateTask, softDeleteTask };
+module.exports = { createTask, getAllTasks, getTaskById, updateTask, titleStatusUpdateTask, softDeleteTask, filterTasksByStatus };

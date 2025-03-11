@@ -27,7 +27,7 @@ const getUserByEmail = async (email) => {
         if (err) {
           reject(err);
         } else if (results.length === 0) {
-          reject(err);
+          reject('USER_NOT_FOUND');
         } else {
           resolve(results[0]);
         }
@@ -80,7 +80,7 @@ const updateUserDetails = async ({ userId, username, email, passwordHash }) => {
         if (err) {
           reject(err);
         } else if (results.affectedRows === 0) {
-          reject(err);
+          reject('USER_NOT_FOUND');
         } else {
           resolve();
         }

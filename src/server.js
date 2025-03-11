@@ -19,7 +19,7 @@ app.use(helmet())
 
 app.use(cors(corsOptions));
 
-app.use('/api', todoTaskRoutes); 
+app.use('/api/tasks', todoTaskRoutes); 
 app.use('/api/users', userRoutes);  
 
 

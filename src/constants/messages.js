@@ -6,7 +6,8 @@ module.exports = {
       TASK_RETRIEVED: 'Task retrieved successfully',
       TASKS_RETRIEVED: 'Tasks retrieved successfully',
       USER_LOGGED_IN : 'User login successfully.',
-      TASK_SOFT_DELETED : 'Task soft deleted successfully.'
+      TASK_SOFT_DELETED : 'Task soft deleted successfully.',
+      USER_REGISTERED : ' User register successfully. '
     },
     errorMessages: {
       TASK_CREATION_FAILED: 'Failed to create task.',
@@ -23,10 +24,12 @@ module.exports = {
       NO_TOKEN:'Access denied. No token provided.',
       INVALID_TOKEN:'Invalid or expired token.',
       FORBIDDEN: 'You do not have permission to access this resource.',
-      TASK_SOFT_DELETE_FAILED: 'There was an error while attempting to soft delete the task'
+      TASK_SOFT_DELETE_FAILED: 'There was an error while attempting to soft delete the task',
+      USER_NOT_FOUND : ' User not found',
+      INVALID_FILTERSTATUS : 'Invalid status filter. Allowed values are "complete" or "incomplete".'
     },
    
-    successFullCode : {
+    successCode : {
       OK: 200,
       CREATED: 201,
     },
