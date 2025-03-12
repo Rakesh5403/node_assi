@@ -1,12 +1,12 @@
 
 const pool = require('../config/db');
 
-const createTask = async ({ title, description, status, due_date, user_id, created_by }) => {
+const createTask = async ({ title, description, status, due_date, user_id, created_by ,updated_by}) => {
   try {
-    const query = 'INSERT INTO tasklist (title, description, status, due_date, user_id, created_by) VALUES (?, ?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO tasklist (title, description, status, due_date, user_id, created_by,updated_by) VALUES (?, ?, ?, ?, ?, ?, ?)';
     
     const result = await new Promise((resolve, reject) => {
-      pool.query(query, [title, description, status, due_date, user_id, created_by], (err, results) => {
+      pool.query(query, [title, description, status, due_date, user_id, created_by,updated_by], (err, results) => {
         if (err) {
           reject(err);
         } else {
@@ -23,7 +23,7 @@ const createTask = async ({ title, description, status, due_date, user_id, creat
 
 const getAllTasks = async ({ user_id, status, search, sortField = 'due_date', sortOrder = 'ASC' }) => {
   try {
-    let query = 'SELECT * FROM tasklist WHERE user_id = ?';
+    let query = 'SELECT * FROM tasklist WHERE user_id = ? AND deleted = FALSE';
     const params = [user_id];
 
     if (status) {
@@ -101,7 +101,7 @@ const getTaskById = async (taskId) => {
   }
 };
 
-const updateTask = async (taskId, { title, description, status, due_date }) => {
+const updateTask = async (taskId, { title, description, status, due_date}) => {
   try {
     const result = await new Promise((resolve, reject) => {
       pool.query('UPDATE tasklist SET title = ?, description = ?, status = ?, due_date = ? WHERE id = ?',
@@ -122,23 +122,28 @@ const updateTask = async (taskId, { title, description, status, due_date }) => {
   }
 };
 
-const softDeleteTask = async (id) => {
-  try {
-    const result = await new Promise((resolve, reject) => {
-      pool.query('DELETE FROM tasklist WHERE id = ?', [id], (err, results) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(results);
-        }
-      });
-    });
 
-    return result;
+const softDeleteTask = async (id, userId) => {
+  try {
+      const result = await new Promise((resolve, reject) => {
+          pool.query(
+              'UPDATE tasklist SET deleted = TRUE WHERE id = ? AND user_id = ?',
+              [id, userId],
+              (err, results) => {
+                  if (err) {
+                      reject(err);
+                  } else {
+                      resolve(results);
+                  }
+              }
+          );
+      });
+      return result;
   } catch (error) {
-    throw error;
+      throw error;
   }
 };
+
 
 
 const titleStatusUpdateTask = async (taskId, { title, description, status, due_date }) => {

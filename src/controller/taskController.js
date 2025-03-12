@@ -1,10 +1,10 @@
 const taskModel = require('../models/taskModel');
-const { successMessages, errorMessages, successFullCode, serverErrorCode, clientErrorCode } = require('../constants/messages');
+const { successMessages, errorMessages, successCode, serverErrorCode, clientErrorCode } = require('../constants/messages');
 
 const createTask = async (req, res) => {
   try {
     const { title, description, status, due_date } = req.body;
-    const { userId, username: createdBy } = req.user;
+    const { userId, email: createdBy, username: updatedBy } = req.user;
 
     const result = await taskModel.createTask({ 
       title, 
@@ -12,13 +12,14 @@ const createTask = async (req, res) => {
       status, 
       due_date, 
       user_id: userId, 
-      created_by: createdBy 
+      created_by: createdBy,
+      updated_by: updatedBy 
     });
 
     res.status(successCode.CREATED).json({statusCode:successCode.CREATED, message: successMessages.TASK_CREATED, taskId: result.insertId });
   } catch (err) {
     console.error('Error creating task:', err);
-    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERR, message: errorMessages.TASK_CREATION_FAILED, error: err.message });
+    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.TASK_CREATION_FAILED });
   }
 };
 
@@ -39,7 +40,7 @@ const getAllTasks = async (req, res) => {
     res.status(successCode.OK).json({statusCode:successCode.OK, message: successMessages.TASKS_RETRIEVED, tasks: result });
   } catch (err) {
     console.error('Error getting tasks:', err);
-    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.TASK_RETRIEVAL_FAILED, error: err.message });
+    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.TASK_RETRIEVAL_FAILED });
     
   }
 };
@@ -51,7 +52,8 @@ const filterTasksByStatus = async (req, res) => {
 
     const validStatuses = ['complete', 'incomplete'];
     if (status && !validStatuses.includes(status)) {
-      return res.status(clientErrorCode.BAD_REQUEST).json({statusCode:clientErrorCode.BAD_REQUEST, message: errorMessages.INVALID_FILTERSTATUS });
+
+      throw new Error(errorMessages.INVALID_FILTERSTATUS);
     }
 
     const result = await taskModel.filterTasksByStatus({
@@ -61,8 +63,9 @@ const filterTasksByStatus = async (req, res) => {
 
     res.status(successCode.OK).json({statusCode:successCode.OK, message: successMessages.TASKS_RETRIEVED, tasks: result });
   } catch (err) {
-    console.error('Error filtering tasks:', err);
-    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.TASK_RETRIEVAL_FAILED, error: err.message });
+
+    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({ statusCode: serverErrorCode.INTERNAL_SERVER_ERROR,message: err.message || errorMessages.TASK_RETRIEVAL_FAILED });
+  
   }
 }; 
 
@@ -84,31 +87,36 @@ const updateTask = async (req, res) => {
     const { taskId } = req.params;
     const { title, description, status, due_date } = req.body;
 
-    const result = await taskModel.updateTask(taskId, { title, description, status, due_date, userId});
+    const result = await taskModel.updateTask(taskId, { title, description, status, due_date,userId});
 
     res.status(successCode.OK).json({statusCode:successCode.OK, message: successMessages.TASK_UPDATED });
   } catch (err) {
     console.error('Error updating task:', err);
-    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.TASK_UPDATE_FAILED, error: err.message });
+    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.TASK_UPDATE_FAILED });
   }
 };
+
 
 const softDeleteTask = async (req, res) => {
   try {
-    const { userId } = req.user;
-    const { id } = req.params;
-    const result = await taskModel.softDeleteTask(id, userId);
+      const { userId } = req.user;
+      const { id } = req.params;
 
-    if (result.affectedRows === 0) {
-      return res.status(clientErrorCode.NOT_FOUND).json({statusCode:clientErrorCode.NOT_FOUND, message: errorMessages.TASK_NOT_FOUND });
-    }
+      const result = await taskModel.softDeleteTask(id, userId);
 
-    res.status(successCode.OK).json({statusCode:successCode.OK, message: successMessages.TASK_DELETED });
+      if (result.affectedRows === 0) {
+
+          throw new Error(errorMessages.TASK_NOT_FOUND);
+      }
+
+      res.status(successCode.OK).json({ statusCode: successCode.OK, message: successMessages.TASK_DELETED});
   } catch (err) {
-    console.error('Error deleting task:', err);
-    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.TASK_DELETION_FAILED, error: err.message });
+
+      console.error('Error deleting task:', err);
+      res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode: serverErrorCode.INTERNAL_SERVER_ERROR,message:err.message|| errorMessages.TASK_DELETION_FAILED });
   }
 };
+
 
 
 const titleStatusUpdateTask = async (req, res) => {
@@ -122,7 +130,7 @@ const titleStatusUpdateTask = async (req, res) => {
     res.status(successCode.OK).json({statusCode:successCode.OK, message: successMessages.TASK_UPDATED });
   } catch (err) {
     console.error('Error updating task:', err);
-    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.TASK_UPDATE_FAILED, error: err.message });
+    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.TASK_UPDATE_FAILED });
   }
 };
 

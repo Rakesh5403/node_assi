@@ -1,5 +1,3 @@
-
-
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env; 
 const { errorMessages, clientErrorCode } = require('../constants/messages');
@@ -19,12 +17,12 @@ const authenticateToken = (req, res, next) => {
     req.user = { userId: decoded.userId, username: decoded.username, email: decoded.email }; 
 
     if (req.user.userId == 'userId') {
-      return res.status(clientErrorCode.FORBIDDEN).json({statusCode:clientErrorCode.FORBIDDEN, message: errorMessages.FORBIDDEN });
+      throw new Error(errorMessages.FORBIDDEN)
     }
 
     next();  
   } catch (err) {
-    res.status(clientErrorCode.UNAUTHORIZED).json({ message: errorMessages.INVALID_TOKEN });
+    res.status(clientErrorCode.UNAUTHORIZED).json({statusCode:clientErrorCode.UNAUTHORIZED, message:err.Messages || errorMessages.INVALID_TOKEN });
   }
 };
 

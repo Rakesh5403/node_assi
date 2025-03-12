@@ -8,6 +8,8 @@ const { userValidation, userLoginValidation, userUpdateValidation } = require('.
 
 router.post('/register',validateData(userValidation), userController.registerUser);  
 router.post('/login',validateData(userLoginValidation), userController. loginUser);
-router.put('/updateUserDetails',authenticate, validateData(userUpdateValidation), userController.updateUserDetails);
+router.put('/updateUserDetails',authenticate,validateData(userUpdateValidation), userController.updateUserDetails);
 module.exports = router;
+
+
 

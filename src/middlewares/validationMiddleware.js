@@ -1,5 +1,3 @@
-
-const Joi = require('joi');
 const {  clientErrorCode } = require('../constants/messages');
 const { taskValidation, taskStatusValidation, userValidation, userLoginValidation, userUpdateValidation } = require('../constants/validationConstant');
 

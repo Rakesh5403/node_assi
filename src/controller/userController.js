@@ -1,5 +1,5 @@
 const userModel = require('../models/userModel');
-const { errorMessages, successMessages, successFullCode, serverErrorCode, clientErrorCode } = require('../constants/messages');
+const { errorMessages, successMessages, successCode, serverErrorCode, clientErrorCode } = require('../constants/messages');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -14,7 +14,7 @@ const registerUser = async (req, res) => {
     res.status(successCode.CREATED).json({statusCode:successCode.CREATED, message: successMessages.USER_REGISTERED, userId });
   } catch (err) {
     console.error('Error registering user:', err);
-    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.USER_REGISTRATION_FAILED, error: err.message });
+    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.USER_REGISTRATION_FAILED });
   }
 };
 
@@ -28,10 +28,11 @@ const loginUser = async (req, res) => {
     
     if (!isPasswordValid) {
     
-      return res.status(clientErrorCode.BAD_REQUEST).json({ statusCode:clientErrorCode.BAD_REQUEST, message: errorMessages.INVALID_CREDENTIALS });
+     
+      throw new Error(errorMessages.INVALID_CREDENTIALS);
       
     }
-    const token = jwt.sign({ userId: user.user_id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user.user_id, username: user.username, email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     res.status(successCode.OK).json({ statusCode:successCode.OK,  message: successMessages.USER_LOGGED_IN, token });
   } catch (err) {
@@ -43,7 +44,7 @@ const loginUser = async (req, res) => {
       return res.status(clientErrorCode.NOT_FOUND).json({statusCode:clientErrorCode.NOT_FOUND, message: errorMessages.USER_NOT_FOUND });
     }
 
-    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.USER_LOGIN_FAILED, error: err.message });
+    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.USER_LOGIN_FAILED });
   }
 };
 
@@ -60,7 +61,7 @@ const getUserById = async (req, res) => {
       return res.status(clientErrorCode.NOT_FOUND).json({statusCode:clientErrorCode.NOT_FOUND, message: errorMessages.USER_NOT_FOUND });
     }
 
-    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.USER_RETRIEVAL_FAILED, error: err.message });
+    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.USER_RETRIEVAL_FAILED });
   }
 };
 
@@ -84,10 +85,9 @@ const updateUserDetails = async (req, res) => {
       return res.status(clientErrorCode.NOT_FOUND).json({statusCode:clientErrorCode.NOT_FOUND, message: errorMessages.USER_NOT_FOUND });
     }
 
-    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.USER_UPDATE_FAILED, error: err.message });
+    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.USER_UPDATE_FAILED });
   }
 };
-
 
 
 

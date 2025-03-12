@@ -94,4 +94,6 @@ const updateUserDetails = async ({ userId, username, email, passwordHash }) => {
 };
 
 
+
+
 module.exports = { registerUser, getUserByEmail, getUserById, updateUserDetails };
