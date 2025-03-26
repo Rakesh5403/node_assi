@@ -19,29 +19,29 @@ module.exports = {
       TASK_NOT_FOUND: 'Task not found to update.',
       USER_REGISTRATION_FAILED: 'User registration is failed.',
       INVALID_CREDENTIALS : 'The user credentials were incorrect.',
-      USER_RETRIEVAL_FAILED : 'Failed to retrive user.',
+      USER_RETRIEVAL_FAILED : 'Failed to retrieve user.',
       USER_UPDATE_FAILED : 'Failed to update user.',
       NO_TOKEN:'Access denied. No token provided.',
       INVALID_TOKEN:'Invalid or expired token.',
       FORBIDDEN: 'You do not have permission to access this resource.',
       TASK_SOFT_DELETE_FAILED: 'There was an error while attempting to soft delete the task',
       USER_NOT_FOUND : ' User not found',
-      INVALID_FILTERSTATUS : 'Invalid status filter. Allowed values are "complete" or "incomplete".'
+      INVALID_FILTER_STATUS : 'Invalid status filter. Allowed values are "complete" or "incomplete".'
     },
    
-    successCode : {
+    successCodes : {
       OK: 200,
       CREATED: 201,
     },
 
-    clientErrorCode : {
+    clientErrorCodes : {
       BAD_REQUEST: 400,
       UNAUTHORIZED: 401,
       FORBIDDEN: 403,
       NOT_FOUND: 404,
     },
 
-    serverErrorCode : {
+    serverErrorCodes : {
       INTERNAL_SERVER_ERROR: 500,
     }
 

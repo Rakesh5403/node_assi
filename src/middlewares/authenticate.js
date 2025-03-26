@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env; 
-const { errorMessages, clientErrorCode } = require('../constants/messages');
+const { errorMessages, clientErrorCodes } = require('../constants/messages');
 
 
 
@@ -8,7 +8,7 @@ const authenticateToken = (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');  
   
   if (!token) {
-    return res.status(clientErrorCode.UNAUTHORIZED).json({statusCode:clientErrorCode.UNAUTHORIZED, message: errorMessages.NO_TOKEN });
+    return res.status(clientErrorCodes.UNAUTHORIZED).json({statusCode:clientErrorCodes.UNAUTHORIZED, message: errorMessages.NO_TOKEN });
   }
 
   try {
@@ -21,8 +21,8 @@ const authenticateToken = (req, res, next) => {
     }
 
     next();  
-  } catch (err) {
-    res.status(clientErrorCode.UNAUTHORIZED).json({statusCode:clientErrorCode.UNAUTHORIZED, message:err.Messages || errorMessages.INVALID_TOKEN });
+  } catch (error) {
+    res.status(clientErrorCodes.UNAUTHORIZED).json({statusCode:clientErrorCodes.UNAUTHORIZED, message:error.Messages || errorMessages.INVALID_TOKEN });
   }
 };
 

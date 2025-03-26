@@ -1,11 +1,11 @@
 const taskModel = require('../models/taskModel');
-const { successMessages, errorMessages, successCode, serverErrorCode, clientErrorCode } = require('../constants/messages');
+const { successMessages, errorMessages, successCodes, serverErrorCodes, clientErrorCodes } = require('../constants/messages');
 
 const createTask = async (req, res) => {
   try {
     const { title, description, status, due_date } = req.body;
     const { userId, email: createdBy, username: updatedBy } = req.user;
-
+    
     const result = await taskModel.createTask({ 
       title, 
       description, 
@@ -15,11 +15,12 @@ const createTask = async (req, res) => {
       created_by: createdBy,
       updated_by: updatedBy 
     });
+    
 
-    res.status(successCode.CREATED).json({statusCode:successCode.CREATED, message: successMessages.TASK_CREATED, taskId: result.insertId });
-  } catch (err) {
-    console.error('Error creating task:', err);
-    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.TASK_CREATION_FAILED });
+    res.status(successCodes.CREATED).json({statusCode:successCodes.CREATED, message: successMessages.TASK_CREATED, taskId: result.insertId });
+  } catch (error) {
+    console.error('Error creating task:', error);
+    res.status(serverErrorCodes.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCodes.INTERNAL_SERVER_ERROR, message: errorMessages.TASK_CREATION_FAILED });
   }
 };
 
@@ -37,10 +38,10 @@ const getAllTasks = async (req, res) => {
       sortOrder
     });
 
-    res.status(successCode.OK).json({statusCode:successCode.OK, message: successMessages.TASKS_RETRIEVED, tasks: result });
-  } catch (err) {
-    console.error('Error getting tasks:', err);
-    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.TASK_RETRIEVAL_FAILED });
+    res.status(successCodes.OK).json({statusCode:successCodes.OK, message: successMessages.TASKS_RETRIEVED, tasks: result });
+  } catch (error) {
+    console.error('Error getting tasks:', error);
+    res.status(serverErrorCodes.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCodes.INTERNAL_SERVER_ERROR, message: errorMessages.TASK_RETRIEVAL_FAILED });
     
   }
 };
@@ -53,7 +54,7 @@ const filterTasksByStatus = async (req, res) => {
     const validStatuses = ['complete', 'incomplete'];
     if (status && !validStatuses.includes(status)) {
 
-      throw new Error(errorMessages.INVALID_FILTERSTATUS);
+      throw {statusCode:clientErrorCodes.BAD_REQUEST, message: errorMessages.INVALID_FILTER_STATUS}
     }
 
     const result = await taskModel.filterTasksByStatus({
@@ -61,11 +62,12 @@ const filterTasksByStatus = async (req, res) => {
       status
     });
 
-    res.status(successCode.OK).json({statusCode:successCode.OK, message: successMessages.TASKS_RETRIEVED, tasks: result });
-  } catch (err) {
+    res.status(successCodes.OK).json({statusCode:successCodes.OK, message: successMessages.TASKS_RETRIEVED, tasks: result });
+  } catch (error) {
+    console.log(error.message)
+    const statusCode = error.statusCode || serverErrorCodes.INTERNAL_SERVER_ERROR;
+    res.status(statusCode).json({statusCode: statusCode, message: error.message|| errorMessages.INVALID_FILTER_STATUS});
 
-    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({ statusCode: serverErrorCode.INTERNAL_SERVER_ERROR,message: err.message || errorMessages.TASK_RETRIEVAL_FAILED });
-  
   }
 }; 
 
@@ -74,10 +76,10 @@ const getTaskById = async (req, res) => {
     const { taskId } = req.params;
     const result = await taskModel.getTaskById(taskId);
 
-    res.status(successCode.OK).json({statusCode:successCode.OK, message: successMessages.TASK_RETRIEVED, task: result });
-  } catch (err) {
-    console.error('Error getting task by ID:', err);
-    res.status(clientErrorCode.NOT_FOUND).json({statusCode:clientErrorCode.NOT_FOUND, message: errorMessages.TASK_NOT_FOUND });
+    res.status(successCodes.OK).json({statusCode:successCodes.OK, message: successMessages.TASK_RETRIEVED, task: result });
+  } catch (error) {
+    console.error('Error getting task by ID:', error);
+    res.status(clientErrorCodes.NOT_FOUND).json({statusCode:clientErrorCodes.NOT_FOUND, message: errorMessages.TASK_NOT_FOUND });
   }
 };
 
@@ -89,10 +91,10 @@ const updateTask = async (req, res) => {
 
     const result = await taskModel.updateTask(taskId, { title, description, status, due_date,userId});
 
-    res.status(successCode.OK).json({statusCode:successCode.OK, message: successMessages.TASK_UPDATED });
-  } catch (err) {
-    console.error('Error updating task:', err);
-    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.TASK_UPDATE_FAILED });
+    res.status(successCodes.OK).json({statusCode:successCodes.OK, message: successMessages.TASK_UPDATED });
+  } catch (error) {
+    console.error('Error updating task:', error);
+    res.status(serverErrorCodes.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCodes.INTERNAL_SERVER_ERROR, message: errorMessages.TASK_UPDATE_FAILED });
   }
 };
 
@@ -106,15 +108,16 @@ const softDeleteTask = async (req, res) => {
 
       if (result.affectedRows === 0) {
 
-          throw new Error(errorMessages.TASK_NOT_FOUND);
+          throw {statusCode:clientErrorCode.NOT_FOUND, message: errorMessages.TASK_NOT_FOUND};
       }
 
-      res.status(successCode.OK).json({ statusCode: successCode.OK, message: successMessages.TASK_DELETED});
-  } catch (err) {
-
-      console.error('Error deleting task:', err);
-      res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode: serverErrorCode.INTERNAL_SERVER_ERROR,message:err.message|| errorMessages.TASK_DELETION_FAILED });
-  }
+      res.status(successCodes.OK).json({ statusCode: successCodes.OK, message: successMessages.TASK_DELETED});
+  } catch (error) {
+    
+      console.error('Error deleting task:', error);
+      const statusCode = error.statusCode || serverErrorCodes.INTERNAL_SERVER_ERROR;
+      res.status(statusCode).json({statusCode: statusCode, message:error.message|| errorMessages.TASK_NOT_FOUND });
+  } ;
 };
 
 
@@ -127,10 +130,10 @@ const titleStatusUpdateTask = async (req, res) => {
 
     const result = await taskModel.titleStatusUpdateTask(taskId, { title, status, due_date, userId });
 
-    res.status(successCode.OK).json({statusCode:successCode.OK, message: successMessages.TASK_UPDATED });
-  } catch (err) {
-    console.error('Error updating task:', err);
-    res.status(serverErrorCode.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCode.INTERNAL_SERVER_ERROR, message: errorMessages.TASK_UPDATE_FAILED });
+    res.status(successCodes.OK).json({statusCode:successCodes.OK, message: successMessages.TASK_UPDATED });
+  } catch (error) {
+    console.error('Error updating task:', error);
+    res.status(serverErrorCodes.INTERNAL_SERVER_ERROR).json({statusCode:serverErrorCodes.INTERNAL_SERVER_ERROR, message: errorMessages.TASK_UPDATE_FAILED });
   }
 };
 

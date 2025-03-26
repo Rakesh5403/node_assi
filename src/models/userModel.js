@@ -4,9 +4,9 @@ const registerUser = async ({ username, email, password_hash }) => {
   try {
     const result = await new Promise((resolve, reject) => {
       pool.query('INSERT INTO user_details (username, email, password_hash) VALUES (?, ?, ?)', 
-      [username, email, password_hash], (err, results) => {
-        if (err) {
-          reject(err);
+      [username, email, password_hash], (error, results) => {
+        if (error) {
+          reject(error);
         } else {
           resolve(results.insertId);
         }
@@ -23,9 +23,9 @@ const registerUser = async ({ username, email, password_hash }) => {
 const getUserByEmail = async (email) => {
   try {
     const result = await new Promise((resolve, reject) => {
-      pool.query('SELECT * FROM user_details WHERE email = ?', [email], (err, results) => {
-        if (err) {
-          reject(err);
+      pool.query('SELECT user_id, username, email, password_hash FROM user_details WHERE email = ?', [email], (error, results) => {
+        if (error) {
+          reject(error);
         } else if (results.length === 0) {
           reject('USER_NOT_FOUND');
         } else {
@@ -44,11 +44,11 @@ const getUserByEmail = async (email) => {
 const getUserById = async (userId) => {
   try {
     const result = await new Promise((resolve, reject) => {
-      pool.query('SELECT * FROM user_details WHERE user_id = ?', [userId], (err, results) => {
-        if (err) {
-          reject(err);
+      pool.query('SELECT user_id, username, email FROM user_details WHERE user_id = ?', [userId], (error, results) => {
+        if (error) {
+          reject(error);
         } else if (results.length === 0) {
-          reject(err);
+          reject(error);
         } else {
           resolve(results[0]);
         }
@@ -76,9 +76,9 @@ const updateUserDetails = async ({ userId, username, email, passwordHash }) => {
     queryParams.push(userId);
 
     const result = await new Promise((resolve, reject) => {
-      pool.query(updateQuery, queryParams, (err, results) => {
-        if (err) {
-          reject(err);
+      pool.query(updateQuery, queryParams, (error, results) => {
+        if (error) {
+          reject(error);
         } else if (results.affectedRows === 0) {
           reject('USER_NOT_FOUND');
         } else {

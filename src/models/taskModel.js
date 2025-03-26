@@ -6,9 +6,9 @@ const createTask = async ({ title, description, status, due_date, user_id, creat
     const query = 'INSERT INTO tasklist (title, description, status, due_date, user_id, created_by,updated_by) VALUES (?, ?, ?, ?, ?, ?, ?)';
     
     const result = await new Promise((resolve, reject) => {
-      pool.query(query, [title, description, status, due_date, user_id, created_by,updated_by], (err, results) => {
-        if (err) {
-          reject(err);
+      pool.query(query, [title, description, status, due_date, user_id, created_by,updated_by], (error, results) => {
+        if (error) {
+          reject(error);
         } else {
           resolve(results);
         }
@@ -23,7 +23,7 @@ const createTask = async ({ title, description, status, due_date, user_id, creat
 
 const getAllTasks = async ({ user_id, status, search, sortField = 'due_date', sortOrder = 'ASC' }) => {
   try {
-    let query = 'SELECT * FROM tasklist WHERE user_id = ? AND deleted = FALSE';
+    let query = 'SELECT id, title, description, due_date FROM tasklist WHERE user_id = ? AND deleted = FALSE';
     const params = [user_id];
 
     if (status) {
@@ -40,9 +40,9 @@ const getAllTasks = async ({ user_id, status, search, sortField = 'due_date', so
     params.push(sortField);
 
     const result = await new Promise((resolve, reject) => {
-      pool.query(query, params, (err, results) => {
-        if (err) {
-          reject(err);
+      pool.query(query, params, (error, results) => {
+        if (error) {
+          reject(error);
         } else {
           resolve(results);
         }
@@ -57,7 +57,7 @@ const getAllTasks = async ({ user_id, status, search, sortField = 'due_date', so
 
 const filterTasksByStatus = async ({ user_id, status }) => {
   try {
-    let query = 'SELECT * FROM tasklist WHERE user_id = ?';
+    let query = 'SELECT id, title, description, status FROM tasklist WHERE user_id = ?';
     const params = [user_id];
 
     if (status) {
@@ -66,9 +66,9 @@ const filterTasksByStatus = async ({ user_id, status }) => {
     }
 
     const result = await new Promise((resolve, reject) => {
-      pool.query(query, params, (err, results) => {
-        if (err) {
-          reject(err);
+      pool.query(query, params, (error, results) => {
+        if (error) {
+          reject(error);
         } else {
           resolve(results);
         }
@@ -84,9 +84,9 @@ const filterTasksByStatus = async ({ user_id, status }) => {
 const getTaskById = async (taskId) => {
   try {
     const result = await new Promise((resolve, reject) => {
-      pool.query('SELECT * FROM tasklist WHERE id = ?', [taskId], (err, result) => {
-        if (err) {
-          reject(err);
+      pool.query('SELECT id FROM tasklist WHERE id = ?', [taskId], (error, result) => {
+        if (error) {
+          reject(error);
         } else if (result.length === 0) {
           reject('Task not found');
         } else {
@@ -105,11 +105,11 @@ const updateTask = async (taskId, { title, description, status, due_date}) => {
   try {
     const result = await new Promise((resolve, reject) => {
       pool.query('UPDATE tasklist SET title = ?, description = ?, status = ?, due_date = ? WHERE id = ?',
-        [title, description, status, due_date, taskId], (err, results) => {
-          if (err) {
-            reject(err);
+        [title, description, status, due_date, taskId], (error, results) => {
+          if (error) {
+            reject(error);
           } else if (results.affectedRows === 0) {
-            reject(err);
+            reject(error);
           } else {
             resolve(results);
           }
@@ -129,9 +129,9 @@ const softDeleteTask = async (id, userId) => {
           pool.query(
               'UPDATE tasklist SET deleted = TRUE WHERE id = ? AND user_id = ?',
               [id, userId],
-              (err, results) => {
-                  if (err) {
-                      reject(err);
+              (error, results) => {
+                  if (error) {
+                      reject(error);
                   } else {
                       resolve(results);
                   }
@@ -177,11 +177,11 @@ const titleStatusUpdateTask = async (taskId, { title, description, status, due_d
       updateValues.push(taskId);
       const query = `UPDATE tasklist SET ${updateFields.join(', ')} WHERE id = ?`;
 
-      pool.query(query, updateValues, (err, results) => {
-        if (err) {
-          reject(err);
+      pool.query(query, updateValues, (error, results) => {
+        if (error) {
+          reject(error);
         } else if (results.affectedRows === 0) {
-          reject(err);
+          reject(error);
         } else {
           resolve(results);
         }

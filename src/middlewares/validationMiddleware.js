@@ -1,4 +1,4 @@
-const {  clientErrorCode } = require('../constants/messages');
+const {  clientErrorCodes } = require('../constants/messages');
 const { taskValidation, taskStatusValidation, userValidation, userLoginValidation, userUpdateValidation } = require('../constants/validationConstant');
 
 const validateData = (schema) => {
@@ -6,7 +6,7 @@ const validateData = (schema) => {
     const { error } = schema.validate(req.body);
     if (error) {
       const errorMessages = error.details.map((detail) => detail.message) .join(', ');
-      return res.status(clientErrorCode.BAD_REQUEST).json({statusCode:clientErrorCode.BAD_REQUEST, error: errorMessages });
+      return res.status(clientErrorCodes.BAD_REQUEST).json({statusCode:clientErrorCodes.BAD_REQUEST, error: errorMessages });
     }
     next();
   };
